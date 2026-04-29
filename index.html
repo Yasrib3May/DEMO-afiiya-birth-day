@@ -1319,10 +1319,25 @@ function checkPw(){
   const errEl=document.getElementById('pwErr');
   if(val==='3may2024'){
     closePwModal();
-    loadWishes().then(()=>{
-      renderModal();
-      document.getElementById('wishModal').classList.add('open');
-    });
+    // ১. সাথে সাথে locally cached wishes দিয়ে modal খোলো
+    renderModal();
+    document.getElementById('wishModal').classList.add('open');
+    // ২. Background-এ latest data fetch করো, এলে update করো
+    fetch(JB_URL+'/latest',{
+      headers:{'X-Master-Key':JB_KEY,'X-Bin-Meta':'false'}
+    })
+    .then(r=>r.ok?r.json():null)
+    .then(data=>{
+      if(data&&Array.isArray(data)){
+        allWishes=data;
+        updateWishCount();
+        // Modal এখনো খোলা থাকলে refresh করো
+        if(document.getElementById('wishModal').classList.contains('open')){
+          renderModal();
+        }
+      }
+    })
+    .catch(()=>{});
   }else{
     errEl.textContent='Incorrect password. Try again 💜';
     document.getElementById('pwInput').value='';
