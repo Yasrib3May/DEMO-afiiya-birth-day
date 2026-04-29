@@ -314,6 +314,12 @@ body{background:var(--ink);color:var(--t1);font-family:'Lato',sans-serif;font-we
 .wish-name-inp{width:140px;background:rgba(42,10,98,.5);border:none;border-right:1px solid rgba(139,56,212,.2);outline:none;color:var(--t1);font-family:'Cinzel',serif;font-size:9px;letter-spacing:.1em;padding:14px 16px;caret-color:var(--petal);}
 .wish-name-inp::placeholder{color:var(--t4);font-family:'Lato',sans-serif;font-size:.8rem;letter-spacing:0}
 .wish-input{flex:1;background:rgba(24,4,64,.7);border:none;outline:none;color:var(--t1);font-family:'Cormorant Garamond',serif;font-size:1rem;padding:14px 18px;caret-color:var(--petal);}
+.wish-input{flex:1;background:rgba(24,4,64,.7);border:none;outline:none;color:var(--t1);font-family:'Cormorant Garamond',serif;font-size:1rem;padding:14px 18px;caret-color:var(--petal);}
+textarea.wish-input{vertical-align:top;resize:none;}
+.wish-input::-webkit-scrollbar{width:3px;}
+.wish-input::-webkit-scrollbar-track{background:rgba(24,4,64,.7);}
+.wish-input::-webkit-scrollbar-thumb{background:var(--violet);border-radius:2px;}
+.wish-input::-webkit-scrollbar-thumb:hover{background:var(--lavender);}
 .wish-input::placeholder{color:var(--t4)}
 .wish-send{font-family:'Cinzel',serif;font-size:8px;letter-spacing:.25em;color:var(--lavender);background:rgba(42,10,98,.6);border:none;border-left:1px solid rgba(139,56,212,.2);padding:14px 20px;cursor:pointer;text-transform:uppercase;white-space:nowrap;transition:all .3s;}
 .wish-send:hover{background:rgba(90,31,168,.5);color:#fff}
@@ -703,7 +709,7 @@ body{background:var(--ink);color:var(--t1);font-family:'Lato',sans-serif;font-we
   <div class="wish-wrap">
     <div class="wish-form r d3">
       <input class="wish-name-inp" id="wishName" type="text" placeholder="Your name" maxlength="30"/>
-      <input class="wish-input" id="wishIn" type="text" placeholder="Write a birthday wish for Afiya... 💜" maxlength="800" onkeydown="if(event.key==='Enter')addWish()"/>
+      <textarea class="wish-input" id="wishIn" placeholder="Write a birthday wish for Afiya... 💜" maxlength="1000" rows="1" style="resize:none;vertical-align:top;line-height:1.7;"></textarea>
       <button class="wish-send" onclick="addWish()">Send 💜</button>
     </div>
     <div class="wish-sent-msg r d4" id="wishSentMsg"></div>
