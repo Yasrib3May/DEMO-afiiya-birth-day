@@ -492,7 +492,10 @@ body{background:var(--ink);color:var(--t1);font-family:'Lato',sans-serif;font-we
   <div class="pw-modal-inner">
     <div class="pw-title">🔐 Protected · শুধুমাত্র অনুমোদিত</div>
     <div class="pw-sub">Enter the secret password to view all wishes for Afiya 💜</div>
-    <input class="pw-input" id="pwInput" type="password" placeholder="Enter password…" onkeydown="if(event.key==='Enter')checkPw()"/>
+    <div style="position:relative;width:100%;margin-bottom:1rem;">
+      <input class="pw-input" id="pwInput" type="password" placeholder="Enter password…" onkeydown="if(event.key==='Enter')checkPw()" style="margin-bottom:0;padding-right:52px;width:100%;"/>
+      <button id="pwToggleBtn" onclick="togglePwVis()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:17px;color:var(--t3);padding:4px;line-height:1;" title="Show/hide">👁</button>
+    </div>
     <div class="pw-err" id="pwErr"></div>
     <button class="pw-btn" onclick="checkPw()">Unlock 💜</button>
     <button class="pw-cancel" onclick="closePwModal()">✕ Cancel</button>
@@ -1235,28 +1238,35 @@ function uiOn(idx){uiAllOff();document.getElementById('sc'+idx).classList.add('p
 function uiOff(idx){if(idx>=0){document.getElementById('sc'+idx).classList.remove('playing');document.getElementById('sb'+idx).textContent='▶';}document.getElementById('pPlay').textContent='▶';document.getElementById('pDisc').classList.remove('spinning');document.getElementById('pBars').classList.add('off');document.getElementById('pStatus').textContent='paused';}
 
 /* ════════════════════════════════════════
-   GUESTBOOK WISHES
-   — সব ডিভাইস থেকে shared storage-এ সেভ হয়
-   — View All Wishes-এ পাসওয়ার্ড লাগবে: 3may2024
+   GUESTBOOK WISHES — JSONBin.io backend
+   যেকোনো ডিভাইস থেকে সব wishes দেখা যাবে
+   View All Wishes → পাসওয়ার্ড: 3may2024
 ════════════════════════════════════════ */
-const WISHES_KEY='afiya_bday_wishes_2026';
+const JB_KEY='$2a$10$WCMnqxMVb243pAyk8uC.FOU7dSn8N94tMdaiYji4g4yZVekFgAtkO';
+const JB_BIN='69f1e960aaba8821974f8cf2';
+const JB_URL=`https://api.jsonbin.io/v3/b/${JB_BIN}`;
 let allWishes=[];
 
-/* শুধুমাত্র shared storage থেকে লোড করো — সব ডিভাইস একই ডেটা পাবে */
 async function loadWishes(){
   try{
-    const res=await window.storage.get(WISHES_KEY,true);
-    if(res&&res.value){
-      allWishes=JSON.parse(res.value);
+    const r=await fetch(JB_URL+'/latest',{
+      headers:{'X-Master-Key':JB_KEY,'X-Bin-Meta':'false'}
+    });
+    if(r.ok){
+      const data=await r.json();
+      allWishes=Array.isArray(data)?data:[];
     }
   }catch(e){allWishes=[];}
   updateWishCount();
 }
 
-/* শুধুমাত্র shared storage-এ সেভ করো */
 async function saveWishes(){
   try{
-    await window.storage.set(WISHES_KEY,JSON.stringify(allWishes),true);
+    await fetch(JB_URL,{
+      method:'PUT',
+      headers:{'Content-Type':'application/json','X-Master-Key':JB_KEY,'X-Bin-Versioning':'false'},
+      body:JSON.stringify(allWishes)
+    });
   }catch(e){}
 }
 
@@ -1282,12 +1292,22 @@ function renderModal(){
     </div>`).join('');
 }
 
+/* ── পাসওয়ার্ড show/hide ── */
+function togglePwVis(){
+  const inp=document.getElementById('pwInput');
+  const btn=document.getElementById('pwToggleBtn');
+  if(inp.type==='password'){inp.type='text';btn.textContent='🙈';}
+  else{inp.type='password';btn.textContent='👁';}
+}
+
 /* ── পাসওয়ার্ড Modal ── */
 function openPwModal(){
-  document.getElementById('pwInput').value='';
+  const inp=document.getElementById('pwInput');
+  inp.value='';inp.type='password';
+  document.getElementById('pwToggleBtn').textContent='👁';
   document.getElementById('pwErr').textContent='';
   document.getElementById('pwModal').classList.add('open');
-  setTimeout(()=>document.getElementById('pwInput').focus(),200);
+  setTimeout(()=>inp.focus(),200);
 }
 
 function closePwModal(){
@@ -1299,7 +1319,6 @@ function checkPw(){
   const errEl=document.getElementById('pwErr');
   if(val==='3may2024'){
     closePwModal();
-    /* wishes রিফ্রেশ করে modal খুলি */
     loadWishes().then(()=>{
       renderModal();
       document.getElementById('wishModal').classList.add('open');
@@ -1307,17 +1326,17 @@ function checkPw(){
   }else{
     errEl.textContent='Incorrect password. Try again 💜';
     document.getElementById('pwInput').value='';
+    document.getElementById('pwInput').type='password';
+    document.getElementById('pwToggleBtn').textContent='👁';
     document.getElementById('pwInput').focus();
     setTimeout(()=>{errEl.textContent='';},2800);
   }
 }
 
-/* পাসওয়ার্ড Modal বাইরে click করলে বন্ধ হবে */
 document.getElementById('pwModal').addEventListener('click',e=>{
   if(e.target===e.currentTarget)closePwModal();
 });
 
-/* Wish Modal বাইরে click করলে বন্ধ হবে */
 document.getElementById('wishModal').addEventListener('click',e=>{
   if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');
 });
@@ -1328,16 +1347,21 @@ async function addWish(){
   const name=nameEl.value.trim()||'Someone special';
   const text=inp.value.trim();
   if(!text)return;
+  const sentMsg=document.getElementById('wishSentMsg');
+  sentMsg.textContent='💜 Sending…';sentMsg.style.opacity='1';
   const now=new Date();
   const timeStr=now.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+' · '+now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  /* আগে latest data আনো, তারপর push করো — concurrent writes এড়াতে */
+  try{
+    const r=await fetch(JB_URL+'/latest',{headers:{'X-Master-Key':JB_KEY,'X-Bin-Meta':'false'}});
+    if(r.ok){const d=await r.json();allWishes=Array.isArray(d)?d:[];}
+  }catch(e){}
   allWishes.push({name,text,time:timeStr});
-  inp.value='';
+  inp.value='';nameEl.value='';
   await saveWishes();
   updateWishCount();
   spawnPetals(30);
-  const sentMsg=document.getElementById('wishSentMsg');
   sentMsg.textContent='💜 Wish sent! Click "View All Wishes" to see it.';
-  sentMsg.style.opacity='1';
   setTimeout(()=>{sentMsg.style.opacity='0';setTimeout(()=>{sentMsg.textContent='';},400);},3500);
 }
 
