@@ -607,9 +607,35 @@ body{background:var(--ink);color:var(--t1);font-family:'Lato',sans-serif;font-we
       <div class="u-sub" style="margin-top:.5rem">Arabic — "health, vitality &amp; freedom from illness"<br/>A name that carries light within it.</div>
     </div>
     <div class="u-cell">
-      <span class="u-tag">Born under</span>
-      <div class="u-big">Leo ♌</div>
-      <div class="u-sub">Brave · Passionate · Radiant · Loyal<br/>The sun's own sign — naturally.</div>
+      <span class="u-tag">Date of Birth · জন্ম তারিখ · تاريخ الميلاد</span>
+      <div style="display:flex;flex-direction:column;gap:.85rem;margin-top:.4rem;">
+        <!-- ইংরেজি -->
+        <div style="display:flex;align-items:flex-start;gap:.7rem;">
+          <span style="font-family:'Cinzel',serif;font-size:8px;letter-spacing:.18em;color:var(--violet);text-transform:uppercase;min-width:28px;padding-top:.18rem;opacity:.8;">EN</span>
+          <div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:1.38rem;font-weight:300;color:var(--t0);line-height:1.15;letter-spacing:.04em;">13 July, 2009</div>
+            <div style="font-family:'Cinzel',serif;font-size:7.5px;color:var(--t3);letter-spacing:.22em;margin-top:.18rem;">Sunday · Leo ♌</div>
+          </div>
+        </div>
+        <div style="width:100%;height:1px;background:linear-gradient(to right,rgba(139,56,212,.3),transparent);"></div>
+        <!-- বাংলা -->
+        <div style="display:flex;align-items:flex-start;gap:.7rem;">
+          <span style="font-family:'Cinzel',serif;font-size:8px;letter-spacing:.18em;color:var(--petal);text-transform:uppercase;min-width:28px;padding-top:.18rem;opacity:.8;">বাং</span>
+          <div>
+            <div style="font-family:'Noto Serif KR',serif;font-size:1.18rem;color:var(--t1);line-height:1.3;letter-spacing:.03em;">২৯ আষাঢ়, ১৪১৬</div>
+            <div style="font-family:'Lato',sans-serif;font-size:.75rem;color:var(--t3);letter-spacing:.08em;margin-top:.18rem;font-weight:300;">রবিবার · বাংলা সন</div>
+          </div>
+        </div>
+        <div style="width:100%;height:1px;background:linear-gradient(to right,rgba(196,56,110,.25),transparent);"></div>
+        <!-- আরবি -->
+        <div style="display:flex;align-items:flex-start;gap:.7rem;">
+          <span style="font-family:'Cinzel',serif;font-size:8px;letter-spacing:.18em;color:var(--lavender);text-transform:uppercase;min-width:28px;padding-top:.18rem;opacity:.8;">AR</span>
+          <div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:1.18rem;color:var(--t1);line-height:1.3;letter-spacing:.04em;direction:rtl;text-align:left;unicode-bidi:plaintext;">١٩ رجب ١٤٣٠</div>
+            <div style="font-family:'Lato',sans-serif;font-size:.75rem;color:var(--t3);letter-spacing:.08em;margin-top:.18rem;font-weight:300;">الأحد · التقويم الهجري</div>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="u-cell">
       <span class="u-tag">Turning</span>
@@ -1348,21 +1374,18 @@ async function addWish(){
   const text=inp.value.trim();
   if(!text)return;
   const sentMsg=document.getElementById('wishSentMsg');
-  sentMsg.textContent='💜 Sending…';sentMsg.style.opacity='1';
+  /* UI তাৎক্ষণিক আপডেট — সেভ background-এ হবে */
   const now=new Date();
   const timeStr=now.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+' · '+now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-  /* আগে latest data আনো, তারপর push করো — concurrent writes এড়াতে */
-  try{
-    const r=await fetch(JB_URL+'/latest',{headers:{'X-Master-Key':JB_KEY,'X-Bin-Meta':'false'}});
-    if(r.ok){const d=await r.json();allWishes=Array.isArray(d)?d:[];}
-  }catch(e){}
   allWishes.push({name,text,time:timeStr});
   inp.value='';nameEl.value='';
-  await saveWishes();
   updateWishCount();
   spawnPetals(30);
   sentMsg.textContent='💜 Wish sent! Click "View All Wishes" to see it.';
-  setTimeout(()=>{sentMsg.style.opacity='0';setTimeout(()=>{sentMsg.textContent='';},400);},3500);
+  sentMsg.style.opacity='1';
+  setTimeout(()=>{sentMsg.style.opacity='0';setTimeout(()=>{sentMsg.textContent='';},400);},3000);
+  /* background-এ JSONBin-এ সেভ করো */
+  saveWishes().catch(()=>{});
 }
 
 loadWishes();
