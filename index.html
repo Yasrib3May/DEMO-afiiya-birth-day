@@ -309,7 +309,8 @@ body{background:var(--ink);color:var(--t1);font-family:'Lato',sans-serif;font-we
 
 /* ═══ SCENE 8 — WISHES ═══ */
 #s8{background:linear-gradient(180deg,var(--deep),var(--mid))}
-.wish-wrap{max-width:600px;width:100%;margin:0 auto}
+.wish-expand-btn{background:rgba(42,10,98,.6);border:none;border-left:1px solid rgba(139,56,212,.2);padding:14px 14px;cursor:pointer;color:var(--lavender);font-size:16px;transition:all .3s;line-height:1;}
+
 .wish-form{display:flex;border:1px solid rgba(139,56,212,.25);margin-bottom:1rem;}
 .wish-name-inp{width:140px;background:rgba(42,10,98,.5);border:none;border-right:1px solid rgba(139,56,212,.2);outline:none;color:var(--t1);font-family:'Cinzel',serif;font-size:9px;letter-spacing:.1em;padding:14px 16px;caret-color:var(--petal);}
 .wish-name-inp::placeholder{color:var(--t4);font-family:'Lato',sans-serif;font-size:.8rem;letter-spacing:0}
@@ -321,6 +322,16 @@ textarea.wish-input{vertical-align:top;resize:none;}
 .wish-input::-webkit-scrollbar-thumb{background:var(--violet);border-radius:2px;}
 .wish-input::-webkit-scrollbar-thumb:hover{background:var(--lavender);}
 .wish-input::placeholder{color:var(--t4)}
+
+/* Expand modal scrollbar */
+#expandText::-webkit-scrollbar{width:3px;}
+#expandText::-webkit-scrollbar-track{background:rgba(24,4,64,.7);}
+#expandText::-webkit-scrollbar-thumb{background:var(--violet);border-radius:2px;}
+#expandText::-webkit-scrollbar-thumb:hover{background:var(--lavender);}
+
+/* Expand modal outer scroll off */
+#expandModal{overflow:hidden;}
+#expandModal > div{overflow-y:auto;}
 .wish-send{font-family:'Cinzel',serif;font-size:8px;letter-spacing:.25em;color:var(--lavender);background:rgba(42,10,98,.6);border:none;border-left:1px solid rgba(139,56,212,.2);padding:14px 20px;cursor:pointer;text-transform:uppercase;white-space:nowrap;transition:all .3s;}
 .wish-send:hover{background:rgba(90,31,168,.5);color:#fff}
 .wish-count{font-family:'Cinzel',serif;font-size:8px;letter-spacing:.2em;color:var(--t4);text-align:center;margin-bottom:1.4rem;}
@@ -509,6 +520,17 @@ textarea.wish-input{vertical-align:top;resize:none;}
 </div>
 
 <!-- WISH MODAL -->
+<div id="expandModal" style="display:none;position:fixed;inset:0;background:rgba(4,1,10,.96);z-index:9987;align-items:center;justify-content:center;padding:2rem;">
+  <div style="background:linear-gradient(160deg,rgba(24,4,64,.97),rgba(8,1,18,.98));border:1px solid rgba(139,56,212,.35);max-width:560px;width:100%;padding:2.4rem;position:relative;">
+    <div style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:.4em;color:var(--lavender);text-transform:uppercase;margin-bottom:1.2rem;">✍️ Write Your Wish</div>
+    <textarea id="expandText" placeholder="Write a birthday wish for Afiya... 💜" maxlength="1000" style="width:100%;height:200px;background:rgba(24,4,64,.7);border:1px solid rgba(139,56,212,.3);outline:none;color:var(--t1);font-family:'Cormorant Garamond',serif;font-size:1.05rem;padding:16px 18px;caret-color:var(--petal);resize:none;line-height:1.9;"></textarea>
+    <div style="font-family:'Lato',sans-serif;font-size:.75rem;color:var(--t4);text-align:right;margin-top:.3rem;" id="expandCount">0 / 1000</div>
+    <div style="display:flex;gap:10px;margin-top:1.2rem;justify-content:flex-end;">
+      <button onclick="closeExpandModal()" style="font-family:'Cinzel',serif;font-size:8px;letter-spacing:.25em;color:var(--t4);background:none;border:1px solid rgba(139,56,212,.25);padding:11px 22px;cursor:pointer;text-transform:uppercase;transition:all .3s;">✕ Cancel</button>
+      <button onclick="sendFromExpand()" style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:.35em;color:#fff;background:linear-gradient(135deg,var(--lift),var(--glow));border:none;padding:11px 28px;cursor:pointer;text-transform:uppercase;transition:all .3s;">Send 💜</button>
+    </div>
+  </div>
+</div>
 <div id="wishModal">
   <div class="wish-modal-inner">
     <div class="wm-header">
@@ -708,8 +730,8 @@ textarea.wish-input{vertical-align:top;resize:none;}
   <div class="section-kr r d2 member-hint">Drop your birthday wishes for Afiya here! 💜</div>
   <div class="wish-wrap">
     <div class="wish-form r d3">
-      <input class="wish-name-inp" id="wishName" type="text" placeholder="Your name" maxlength="30"/>
-      <textarea class="wish-input" id="wishIn" placeholder="Write a birthday wish for Afiya... 💜" maxlength="1000" rows="1" style="resize:none;vertical-align:top;line-height:1.7;"></textarea>
+      <input class="wish-name-inp" id="wishName" type="text" placeholder="Your name"  maxlength="30"/>
+ <textarea class="wish-input" id="wishIn" placeholder="Write a birthday wish for Afiya... 💜" maxlength="1000" rows="1" style="resize:none;vertical-align:top;line-height:1.7;overflow-y:auto;max-height:42px;" onclick="openExpandModal()" readonly></textarea>
       <button class="wish-send" onclick="addWish()">Send 💜</button>
     </div>
     <div class="wish-sent-msg r d4" id="wishSentMsg"></div>
@@ -1252,7 +1274,33 @@ const JB_KEY='$2a$10$WCMnqxMVb243pAyk8uC.FOU7dSn8N94tMdaiYji4g4yZVekFgAtkO';
 const JB_BIN='69f1e960aaba8821974f8cf2';
 const JB_URL=`https://api.jsonbin.io/v3/b/${JB_BIN}`;
 let allWishes=[];
+function openExpandModal(){
+  const small=document.getElementById('wishIn');
+  const big=document.getElementById('expandText');
+  big.value=small.value;
+  document.getElementById('expandCount').textContent=big.value.length+' / 1000';
+  document.getElementById('expandModal').style.display='flex';
+  setTimeout(()=>big.focus(),200);
+}
+function closeExpandModal(){
+  const big=document.getElementById('expandText');
+  document.getElementById('wishIn').value=big.value;
+  document.getElementById('expandModal').style.display='none';
+}
+function sendFromExpand(){
+  const big=document.getElementById('expandText');
+  document.getElementById('wishIn').value=big.value;
+  document.getElementById('expandModal').style.display='none';
+  addWish();
+}
+document.getElementById('expandText').addEventListener('input',function(){
+  document.getElementById('expandCount').textContent=this.value.length+' / 1000';
+});
+document.getElementById('expandModal').addEventListener('click',function(e){
+  if(e.target===this)closeExpandModal();
+});
 
+loadWishes();
 async function loadWishes(){
   try{
     const r=await fetch(JB_URL+'/latest',{
