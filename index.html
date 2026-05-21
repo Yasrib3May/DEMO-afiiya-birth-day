@@ -603,7 +603,7 @@ textarea.wish-input{vertical-align:top;resize:none;}
   </div>
   <div style="position:relative;display:flex;align-items:center;">
   <button class="p-btn" id="pVolBtn" onclick="toggleVolSlider()">🔊</button>
-  <div id="volPopup" style="display:none;position:absolute;left:36px;top:50%;transform:translateY(-50%);background:rgba(8,1,18,.95);border:1px solid rgba(139,56,212,.3);border-radius:8px;padding:8px 14px;align-items:center;gap:8px;z-index:999;white-space:nowrap;">
+  <div id="volPopup" style="display:none;position:absolute;bottom:48px;left:50%;transform:translateX(-50%);background:rgba(8,1,18,.95);border:1px solid rgba(139,56,212,.3);border-radius:8px;padding:8px 14px;align-items:center;gap:8px;z-index:999;white-space:nowrap;">
     <span style="font-family:'Cinzel',serif;font-size:7px;letter-spacing:.2em;color:var(--lavender)" id="volNum">80%</span>
     <input type="range" id="pVol" min="0" max="100" value="80" oninput="setVol(this.value)" style="-webkit-appearance:none;width:80px;height:2px;background:rgba(90,31,168,.3);border-radius:1px;outline:none;cursor:pointer;">
   </div>
@@ -761,9 +761,9 @@ textarea.wish-input{vertical-align:top;resize:none;}
   </p>
   <div class="songs-grid r d4" id="songsGrid"></div>
   <p class="r d5" style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.05rem;color:var(--t3);text-align:center;margin-top:2rem;max-width:520px;margin-left:auto;margin-right:auto;line-height:2.1;">These songs carry the same warmth, strength and magic that you do, Afiya. 💜</p>
-  <div class="r d5" style="max-width:720px;width:100%;margin:2rem auto 0;padding:0 1rem;box-sizing:border-box;"></div>
+  <div class="r d5" style="max-width:720px;width:100%;margin:2rem auto 0;">
   <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:.35em;color:var(--lavender);text-transform:uppercase;text-align:center;margin-bottom:1rem;">💜 Spotify Playlist · আরো গান শোনো</div>
-  <iframe style="border-radius:12px;border:1px solid rgba(139,56,212,.3);width:100%;max-width:100%;display:block;" src="https://open.spotify.com/embed/playlist/09KlFmc96hLO1mQfM9Ve83?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+  <iframe style="border-radius:12px;border:1px solid rgba(139,56,212,.3);" src="https://open.spotify.com/embed/playlist/09KlFmc96hLO1mQfM9Ve83?utm_source=generator&theme=1" width="100%" height="400" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
 </div>
 </section>
 
@@ -1144,6 +1144,7 @@ function allBlown(){
   const msg=document.getElementById('blownMsg');
   msg.style.display='block';
   document.getElementById('blowHint').textContent='🌟 All candles blown!';
+  switchToBirthday();
   setTimeout(()=>{launchFW();spawnPetals(120,4000);showBanner();},600);
 }
 
@@ -1159,6 +1160,7 @@ function tickCD(){
   cakeLaunched=true;
   document.getElementById('cakeSection').classList.add('show');
   drawCake();
+  switchToBirthday();
   setTimeout(()=>{launchFW();},1200);
   setTimeout(()=>{spawnPetals(40);},3000);
 }
@@ -1358,11 +1360,32 @@ MEMBERS.forEach(m=>{
 /* ════ DEFAULT BIRTHDAY THEME AUDIO ════ */
 const bdAud=new Audio('birthday.mp3');
 bdAud.volume=0.8;
-let bdMode=true;
+const phase1Aud=new Audio('songs/blue.mp3');
+phase1Aud.volume=0.6;
+phase1Aud.loop=true;
+let bdMode=false;
+let phase1Mode=true;
 
-document.getElementById('pTitle').textContent='🎂 Birthday Theme 💜';
-document.getElementById('pStatus').textContent='tap ▶ to play';
-document.getElementById('pDisc').querySelector('.p-disc-emoji').textContent='🎂';
+// Phase 1 শুরু
+phase1Aud.play().catch(()=>{});
+document.getElementById('pTitle').textContent='🎵 Blue — Yung Kai';
+document.getElementById('pStatus').textContent='♪ now playing';
+document.getElementById('pDisc').querySelector('.p-disc-emoji').textContent='🩵';
+document.getElementById('pPlay').textContent='⏸';
+document.getElementById('pDisc').classList.add('spinning');
+document.getElementById('pBars').classList.remove('off');
+
+function switchToBirthday(){
+  if(!phase1Mode)return;
+  phase1Mode=false;
+  phase1Aud.pause();
+  phase1Aud.currentTime=0;
+  bdMode=true;
+  const p=bdAud.play();if(p)p.catch(()=>{});
+  document.getElementById('pTitle').textContent='🎂 Birthday Theme 💜';
+  document.getElementById('pStatus').textContent='♪ now playing';
+  document.getElementById('pDisc').querySelector('.p-disc-emoji').textContent='🎂';
+}
 
 /* ════ AUDIO PLAYER ════ */
 const SONGS=[
@@ -1406,6 +1429,11 @@ function startSong(idx){
 function pauseSong(){if(!isPlaying)return;aud.pause();}
 function resumeSong(){if(isPlaying||curIdx<0)return;const p=aud.play();if(p)p.catch(()=>{});isPlaying=true;}
 function togglePlay(){
+  if(phase1Mode){
+    if(phase1Aud.paused){const p=phase1Aud.play();if(p)p.catch(()=>{});}
+    else{phase1Aud.pause();}
+    return;
+  }
   if(bdMode){
     if(bdAud.paused){const p=bdAud.play();if(p)p.catch(()=>{});}
     else{bdAud.pause();}
