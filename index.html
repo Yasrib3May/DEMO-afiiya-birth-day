@@ -761,10 +761,13 @@ textarea.wish-input{vertical-align:top;resize:none;}
   </p>
   <div class="songs-grid r d4" id="songsGrid"></div>
   <p class="r d5" style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.05rem;color:var(--t3);text-align:center;margin-top:2rem;max-width:520px;margin-left:auto;margin-right:auto;line-height:2.1;">These songs carry the same warmth, strength and magic that you do, Afiya. 💜</p>
-  <div class="r d5" style="max-width:720px;width:100%;margin:2rem auto 0;">
-  <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:.35em;color:var(--lavender);text-transform:uppercase;text-align:center;margin-bottom:1rem;">You favorite playlist💜 Spotify  ·</div>
-  <iframe style="border-radius:12px;border:1px solid rgba(139,56,212,.3);" src="https://open.spotify.com/embed/playlist/09KlFmc96hLO1mQfM9Ve83?utm_source=generator&theme=1" width="100%" height="400" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
 </div>
+<div class="r d5" style="max-width:720px;width:100%;margin:2rem auto 0;position:relative;">
+  <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:.35em;color:var(--lavender);text-transform:uppercase;text-align:center;margin-bottom:1rem;">You favorite playlist 💜 Spotify</div>
+  <div onclick="stopAllLocal()" style="position:absolute;width:100%;height:60px;z-index:1;cursor:pointer;top:32px;"></div>
+  <iframe id="spotifyFrame" style="border-radius:12px;border:1px solid rgba(139,56,212,.3);" src="https://open.spotify.com/embed/playlist/09KlFmc96hLO1mQfM9Ve83?utm_source=generator&theme=1" width="100%" height="400" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+</div>
+
 </section>
 
 <div class="divider r"><div class="div-line"></div><div class="div-dot">💜</div><div class="div-line"></div></div>
@@ -1433,6 +1436,25 @@ SONGS.forEach((s,i)=>{
 
 function pauseSong(){if(!isPlaying)return;aud.pause();}
 function resumeSong(){if(isPlaying||curIdx<0)return;const p=aud.play();if(p)p.catch(()=>{});isPlaying=true;}
+window.addEventListener('message',e=>{
+  if(e.origin==='https://open.spotify.com'){
+    try{
+      const d=JSON.parse(e.data);
+      if(d.type==='playback_update'&&!d.payload.isPaused){
+        phase1Aud.pause();
+        bdAud.pause();
+        aud.pause();
+        isPlaying=false;
+        phase1Mode=false;
+        bdMode=false;
+        uiAllOff();
+        document.getElementById('pPlay').textContent='▶';
+        document.getElementById('pDisc').classList.remove('spinning');
+        document.getElementById('pBars').classList.add('off');
+      }
+    }catch(e){}
+  }
+});
 function togglePlay(){
   if(phase1Mode){
     if(phase1Aud.paused){const p=phase1Aud.play();if(p)p.catch(()=>{});}
@@ -1450,7 +1472,9 @@ function prevSong(){if(curIdx>0)startSong(curIdx-1);}
 function nextSong(){if(curIdx>=0)startSong((curIdx+1)%SONGS.length);}
 let volTimer=null;
 function setVol(v){
-  aud.volume=v/100;bdAud.volume=v/100;
+  aud.volume=v/100;
+  bdAud.volume=v/100;
+  phase1Aud.volume=v/100;
   document.getElementById('volNum').textContent=v+'%';
   document.getElementById('pVolBtn').textContent=v==0?'🔇':v<50?'🔉':'🔊';
   clearTimeout(volTimer);
@@ -1511,7 +1535,20 @@ phase1Aud.addEventListener('playing',()=>{
   document.getElementById('pStatus').textContent='♪ now playing';
   startTimer();
 });
-
+function stopAllLocal(){
+  phase1Aud.pause();
+  bdAud.pause();
+  aud.pause();
+  isPlaying=false;
+  phase1Mode=false;
+  bdMode=false;
+  uiAllOff();
+  document.getElementById('pPlay').textContent='▶';
+  document.getElementById('pDisc').classList.remove('spinning');
+  document.getElementById('pBars').classList.add('off');
+  document.getElementById('pStatus').textContent='paused';
+  stopTimer();
+}
 function startSong(idx){
   if(phase1Mode){
     phase1Mode=false;
