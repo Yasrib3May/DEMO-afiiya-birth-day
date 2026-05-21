@@ -1367,13 +1367,25 @@ let bdMode=false;
 let phase1Mode=true;
 
 // Phase 1 শুরু
-phase1Aud.play().catch(()=>{});
 document.getElementById('pTitle').textContent='🎵 Blue — Yung Kai';
-document.getElementById('pStatus').textContent='♪ now playing';
+document.getElementById('pStatus').textContent='tap ▶ to play';
 document.getElementById('pDisc').querySelector('.p-disc-emoji').textContent='🩵';
-document.getElementById('pPlay').textContent='⏸';
-document.getElementById('pDisc').classList.add('spinning');
-document.getElementById('pBars').classList.remove('off');
+document.getElementById('pPlay').textContent='▶';
+
+phase1Aud.addEventListener('playing',()=>{
+  if(!phase1Mode)return;
+  document.getElementById('pPlay').textContent='⏸';
+  document.getElementById('pDisc').classList.add('spinning');
+  document.getElementById('pBars').classList.remove('off');
+  document.getElementById('pStatus').textContent='♪ now playing';
+});
+phase1Aud.addEventListener('pause',()=>{
+  if(!phase1Mode)return;
+  document.getElementById('pPlay').textContent='▶';
+  document.getElementById('pDisc').classList.remove('spinning');
+  document.getElementById('pBars').classList.add('off');
+  document.getElementById('pStatus').textContent='paused';
+});
 
 function switchToBirthday(){
   if(!phase1Mode)return;
@@ -1443,12 +1455,6 @@ function togglePlay(){
 }
 function prevSong(){if(curIdx>0)startSong(curIdx-1);}
 function nextSong(){if(curIdx>=0)startSong((curIdx+1)%SONGS.length);}
-function setVol(v){
-  aud.volume=v/100;bdAud.volume=v/100;
-  const btn=document.getElementById('pVolBtn');
-  document.getElementById('volNum').textContent=v+'%';
-  btn.textContent=v==0?'🔇':v<50?'🔉':'🔊';
-}
 let volTimer=null;
 function setVol(v){
   aud.volume=v/100;bdAud.volume=v/100;
@@ -1478,15 +1484,9 @@ document.addEventListener('click',e=>{
     clearTimeout(volTimer);
   }
 });
-// বাইরে click করলে popup বন্ধ হবে
-document.addEventListener('click',e=>{
-  const pop=document.getElementById('volPopup');
-  const btn=document.getElementById('pVolBtn');
-  if(pop&&!pop.contains(e.target)&&e.target!==btn){
-    pop.style.display='none';
-  }
-});
+
 function seekTo(v){
+  if(phase1Mode&&isFinite(phase1Aud.duration)){phase1Aud.currentTime=(v/100)*phase1Aud.duration;return;}
   if(bdMode&&isFinite(bdAud.duration)){bdAud.currentTime=(v/100)*bdAud.duration;return;}
   if(curIdx<0||!isFinite(aud.duration))return;aud.currentTime=(v/100)*aud.duration;
 }
