@@ -750,7 +750,7 @@ textarea.wish-input{vertical-align:top;resize:none;}
 <div class="divider r"><div class="div-line"></div><div class="div-dot">💜</div><div class="div-line"></div></div>
 
 <!-- ══ SCENE 7 — PLAYLIST ══ -->
-<section class="sec" id="s7" style="min-height:auto;padding:5.5rem 2rem">
+<section class="sec" id="s7" style="min-height:auto;padding:5.5rem 2rem;overflow:visible;"></section>
   <span class="section-label r">🎵 플레이리스트</span>
   <h2 class="section-title r d1">BTS <em>Playlist</em></h2>
   <div class="section-kr r d2">그녀를 위한 플레이리스트</div>
@@ -1404,14 +1404,16 @@ function switchToBirthday(){
 
 /* ════ AUDIO PLAYER ════ */
 const SONGS=[
-  {emoji:'🌌',title:'Dynamite',     titleKr:'다이너마이트',       desc:'For when you need to feel unstoppable.',       file:'songs/dynamite.mp3'},
-  {emoji:'💜',title:'Life Goes On', titleKr:'라이프 고즈 온',     desc:'Life continues — and so do you.',              file:'songs/life-goes-on.mp3'},
-  {emoji:'🌙',title:'Spring Day',   titleKr:'봄날',               desc:'This one feels like a warm hug from far away.',file:'songs/spring-day.mp3'},
-  {emoji:'⭐',title:'Boy With Luv', titleKr:'작은 것들을 위한 시', desc:'Playful, bright and overflowing with joy.',   file:'songs/boy-with-luv.mp3'},
-  {emoji:'🌸',title:'Butter',       titleKr:'버터',               desc:'Smooth, sweet and impossible to ignore.',     file:'songs/butter.mp3'},
-  {emoji:'🔥',title:'Fire',         titleKr:'불타오르네',          desc:'For the days when you need to own the world.',file:'songs/fire.mp3'},
-  {emoji:'🌊',title:'DNA',          titleKr:'DNA',                desc:"It's written in your very DNA, Afiya.",       file:'songs/dna.mp3'},
-  {emoji:'💫',title:'Magic Shop',   titleKr:'매직샵',             desc:'A place in your heart that will always be there.',file:'songs/magic-shop.mp3'},
+  {emoji:'🩵',title:"They Don't Know 'Bout Us", titleKr:'원디렉션',    desc:'Some things only you and I know. 💜',              file:'songs/they-dont-know.mp3'},
+  {emoji:'🌊',title:'Swim',          titleKr:'수영',               desc:'Float through it all, Afiya.',                      file:'songs/swim.mp3'},
+  {emoji:'🌙',title:'Spring Day',    titleKr:'봄날',               desc:'This one feels like a warm hug from far away.',      file:'songs/spring-day.mp3'},
+  {emoji:'💜',title:'Life Goes On',  titleKr:'라이프 고즈 온',     desc:'Life continues — and so do you.',                    file:'songs/life-goes-on.mp3'},
+  {emoji:'💫',title:'Magic Shop',    titleKr:'매직샵',             desc:'A place in your heart that will always be there.',   file:'songs/magic-shop.mp3'},
+  {emoji:'⭐',title:'Boy With Luv',  titleKr:'작은 것들을 위한 시', desc:'Playful, bright and overflowing with joy.',         file:'songs/boy-with-luv.mp3'},
+  {emoji:'🌸',title:'Butter',        titleKr:'버터',               desc:'Smooth, sweet and impossible to ignore.',            file:'songs/butter.mp3'},
+  {emoji:'🌌',title:'Dynamite',      titleKr:'다이너마이트',        desc:'For when you need to feel unstoppable.',             file:'songs/dynamite.mp3'},
+  {emoji:'🔥',title:'Fire',          titleKr:'불타오르네',          desc:'For the days when you need to own the world.',       file:'songs/fire.mp3'},
+  {emoji:'🌊',title:'DNA',           titleKr:'DNA',                desc:"It's written in your very DNA, Afiya.",              file:'songs/dna.mp3'},
 ];
 const aud=new Audio();aud.volume=0.8;
 let curIdx=-1,isPlaying=false,timerRAF=null;
