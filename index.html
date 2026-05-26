@@ -286,15 +286,26 @@ body{background:var(--ink);color:var(--t1);font-family:'Lato',sans-serif;font-we
 .p-disc::after{content:'';position:absolute;inset:7px;border-radius:50%;background:var(--ink)}
 .p-disc-emoji{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;z-index:1}
 .p-disc.spinning{animation:discSpin 3s linear infinite}
-.p-info{flex:1;min-width:0}
-.p-title{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.12em;color:var(--lavender);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;flex:1;min-width:0;}
+.p-info{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;}
+.p-title{
+  font-family:'Cinzel',serif;
+  font-size:9px;
+  letter-spacing:.12em;
+  color:var(--lavender);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:none;
+  flex:1;
+  min-width:0;
+}
 .p-status{font-family:'Lato',sans-serif;font-size:8px;color:var(--t4);margin-top:1px}
 .p-ctrl{display:flex;align-items:center;gap:8px}
 .p-btn{background:none;border:none;color:var(--violet);cursor:pointer;font-size:16px;padding:2px;transition:all .2s}
 .p-btn:hover{color:var(--lavender);transform:scale(1.2)}
 .p-btn#pPlay{width:34px;height:34px;border-radius:50%;border:1px solid rgba(139,56,212,.4);display:flex;align-items:center;justify-content:center;font-size:13px;background:linear-gradient(135deg,var(--lift),var(--glow));color:#fff;}
 .p-btn#pPlay:hover{background:linear-gradient(135deg,var(--rose),var(--violet))}
-.p-progress-area{flex:1;min-width:80px;display:flex;flex-direction:column;gap:3px}
+.p-progress-area{min-width:90px;flex:2}
 .p-seek{-webkit-appearance:none;width:100%;height:2px;background:rgba(90,31,168,.3);border-radius:1px;outline:none;cursor:pointer;}
 .p-seek::-webkit-slider-thumb{-webkit-appearance:none;width:9px;height:9px;border-radius:50%;background:var(--lavender);cursor:pointer;}
 .p-time{font-family:'Lato',sans-serif;font-size:7px;color:var(--t4);text-align:right}
@@ -416,6 +427,13 @@ textarea.wish-input{vertical-align:top;resize:none;}
 
 /* ═══ RESPONSIVE ═══ */
 @media(max-width:768px){
+.p-time{font-size:7px;display:block;}
+.p-seek{height:3px;}
+  #volPopup{
+  left:auto;
+  right:0;
+  transform:translateX(0);
+}
   #s1{justify-content:center;padding-top:0;padding-bottom:0}
 .hero-wrap{margin-top:-3rem}
 .hero-name{font-size:clamp(4.5rem,18vw,8rem)}
@@ -464,9 +482,34 @@ textarea.wish-input{vertical-align:top;resize:none;}
   .songs-grid{grid-template-columns:repeat(2,1fr)}
   .song-desc{display:none}
   .song-card{padding:1rem 1.2rem}
- #player{width:calc(100vw - 1.6rem);min-width:unset;padding:8px 12px;gap:8px;border-radius:16px;bottom:.8rem;left:50%;transform:translateX(-50%)}
-  .p-vol{display:none}
-  .p-title{max-width:none;}
+ #player{
+  width:calc(100vw - 1.6rem);
+  min-width:unset;
+  padding:8px 10px;
+  gap:6px;
+  border-radius:16px;
+  bottom:.8rem;
+  left:50%;
+  transform:translateX(-50%)
+}
+.p-vol{display:none}
+.p-disc{width:32px;height:32px;flex-shrink:0}
+.p-info{flex:1;min-width:0;overflow:hidden;display:flex;flex-direction:column;justify-content:center;}
+.p-title{
+  font-size:8px;
+  letter-spacing:.06em;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:100%;
+  display:block;
+}
+.p-status{font-size:7px}
+.p-ctrl{gap:4px;flex-shrink:0}
+.p-btn{font-size:14px;padding:1px}
+.p-progress-area{min-width:90px;flex:2}
+.p-bars{display:flex}
+.p-bars .p-bar{width:1.5px;height:12px}
   .wish-form{flex-wrap:wrap}
   .wish-name-inp{width:100%;border-right:none;border-bottom:1px solid rgba(139,56,212,.2);}
   .wish-input{width:100%;min-width:0;}
@@ -491,6 +534,19 @@ textarea.wish-input{vertical-align:top;resize:none;}
 
 
 @media(max-width:400px){
+.p-title{
+  font-size:8px;
+  letter-spacing:.06em;
+}
+#player{
+  gap:6px;
+}
+.p-ctrl{
+  gap:5px;
+}
+.p-btn{
+  font-size:13px;
+}
   .hero-name{font-size:clamp(4rem,18vw,6rem)}
   .universe{grid-template-columns:1fr 1fr}
 .u-cell{padding:.8rem .6rem}
@@ -603,7 +659,7 @@ textarea.wish-input{vertical-align:top;resize:none;}
   </div>
   <div style="position:relative;display:flex;align-items:center;">
   <button class="p-btn" id="pVolBtn" onclick="toggleVolSlider()">🔊</button>
-  <div id="volPopup" style="display:none;position:absolute;bottom:48px;left:50%;transform:translateX(-50%);background:rgba(8,1,18,.95);border:1px solid rgba(139,56,212,.3);border-radius:8px;padding:8px 14px;align-items:center;gap:8px;z-index:999;white-space:nowrap;">
+  <div id="volPopup" style="display:none;position:absolute;bottom:48px;right:0;background:rgba(8,1,18,.95);border:1px solid rgba(139,56,212,.3);border-radius:8px;padding:8px 14px;align-items:center;gap:8px;z-index:999;white-space:nowrap;">
     <span style="font-family:'Cinzel',serif;font-size:7px;letter-spacing:.2em;color:var(--lavender)" id="volNum">80%</span>
     <input type="range" id="pVol" min="0" max="100" value="80" oninput="setVol(this.value)" style="-webkit-appearance:none;width:80px;height:2px;background:rgba(90,31,168,.3);border-radius:1px;outline:none;cursor:pointer;">
   </div>
@@ -750,7 +806,7 @@ textarea.wish-input{vertical-align:top;resize:none;}
 <div class="divider r"><div class="div-line"></div><div class="div-dot">💜</div><div class="div-line"></div></div>
 
 <!-- ══ SCENE 7 — PLAYLIST ══ -->
-<section class="sec" id="s7" style="min-height:auto;padding:5.5rem 2rem;overflow:visible;"
+<section class="sec" id="s7" style="min-height:auto;padding:5.5rem 2rem;overflow:visible;">
   <span class="section-label r">🎵 플레이리스트</span>
   <h2 class="section-title r d1">BTS <em>Playlist</em></h2>
   <div class="section-kr r d2">그녀를 위한 플레이리스트</div>
@@ -1552,17 +1608,30 @@ function stopAllLocal(){
   stopTimer();
 }
 function startSong(idx){
-  if(phase1Mode){
-    phase1Mode=false;
-    phase1Aud.pause();
-    phase1Aud.currentTime=0;
-  }
+  if(phase1Mode){phase1Mode=false;phase1Aud.pause();phase1Aud.currentTime=0;}
   if(bdMode){bdAud.pause();bdAud.currentTime=0;bdMode=false;}
-  aud.pause();curIdx=idx;aud.src=SONGS[idx].file;aud.currentTime=0;
-  const p=aud.play();if(p)p.catch(()=>{});isPlaying=true;
+  aud.pause();
+  curIdx=idx;
+  isPlaying=false;
   document.getElementById('pTitle').textContent=SONGS[idx].title+' — BTS';
   document.getElementById('pDisc').querySelector('.p-disc-emoji').textContent=SONGS[idx].emoji||'🎵';
   document.getElementById('player').classList.add('active');
+  document.getElementById('pStatus').textContent='⏳ loading...';
+  aud.src=SONGS[idx].file;
+  aud.load();
+  const onReady=()=>{
+    if(curIdx!==idx)return;
+    aud.removeEventListener('canplay',onReady);
+    const p=aud.play();
+    if(p){
+      p.then(()=>{isPlaying=true;})
+       .catch(()=>{
+         document.getElementById('pStatus').textContent='tap ▶ to play';
+         document.getElementById('pPlay').textContent='▶';
+       });
+    }else{isPlaying=true;}
+  };
+  aud.addEventListener('canplay',onReady,{once:true});
 }
 function uiAllOff(){
   document.querySelectorAll('.song-card').forEach(c=>c.classList.remove('playing'));
