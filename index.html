@@ -829,11 +829,32 @@ textarea.wish-input{vertical-align:top;resize:none;}
       Each preview carries the soul of the song —<br/>
       <span style="color:var(--petal);">tap below to hear the full playlist on Spotify 💜</span>
     </div>
-    <a href="https://open.spotify.com/playlist/09KlFmc96hLO1mQfM9Ve83" target="_blank"
-      style="display:inline-flex;align-items:center;gap:10px;font-family:'Cinzel',serif;font-size:9px;letter-spacing:.35em;text-transform:uppercase;color:#fff;text-decoration:none;background:linear-gradient(135deg,#1DB954,#17a349);padding:12px 28px;border-radius:2px;transition:all .3s;">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
-      Open Full Playlist
-    </a>
+    <button onclick="showSpotifyConfirm()" style="display:inline-flex;align-items:center;gap:10px;font-family:'Cinzel',serif;font-size:9px;letter-spacing:.35em;text-transform:uppercase;color:#fff;text-decoration:none;background:linear-gradient(135deg,#1DB954,#17a349);padding:12px 28px;border-radius:2px;border:none;cursor:pointer;">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+  Open Full Playlist
+</button>
+
+<!-- Spotify Confirm Popup -->
+<div id="spotifyConfirm" style="display:none;position:fixed;inset:0;background:rgba(4,1,10,.92);z-index:9999;align-items:center;justify-content:center;padding:2rem;">
+  <div style="background:linear-gradient(160deg,rgba(24,4,64,.98),rgba(8,1,18,.99));border:1px solid rgba(139,56,212,.4);max-width:380px;width:100%;padding:2.4rem 2rem;text-align:center;position:relative;">
+    <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(184,122,232,.6),transparent);"></div>
+    <div style="font-size:2rem;margin-bottom:.8rem;">💜</div>
+    <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:.4em;color:var(--lavender);text-transform:uppercase;margin-bottom:.8rem;">একটু অপেক্ষা করো!</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.1rem;color:var(--t1);line-height:1.9;margin-bottom:1.6rem;">
+      এই website-এ তোমার জন্য আরও অনেক কিছু আছে —<br/>
+      <span style="color:var(--petal);">wishes, surprises আর একটা grand finale! 🎆</span><br/><br/>
+      আগে পুরো website দেখো,<br/>তারপর Spotify-এ যেও 💜
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <button onclick="document.getElementById('spotifyConfirm').style.display='none';gs(7);" style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:.3em;color:#fff;background:linear-gradient(135deg,var(--lift),var(--glow));border:none;padding:13px 24px;cursor:pointer;text-transform:uppercase;transition:all .3s;">
+        💜 Continue Website ↓
+      </button>
+      <button onclick="document.getElementById('spotifyConfirm').style.display='none';window.open('https://open.spotify.com/playlist/09KlFmc96hLO1mQfM9Ve83','_blank');" style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:.3em;color:rgba(255,255,255,.6);background:none;border:1px solid rgba(139,56,212,.3);padding:11px 24px;cursor:pointer;text-transform:uppercase;transition:all .3s;">
+        Open Spotify
+      </button>
+    </div>
+  </div>
+</div>
   </div>
 
   <div onclick="stopAllLocal()" style="position:absolute;width:100%;height:60px;z-index:1;cursor:pointer;top:32px;"></div>
@@ -1963,6 +1984,13 @@ document.querySelectorAll('.r,.r-l,.r-r').forEach(el=>ro.observe(el));
   const seq=[38,38,40,40,37,39,37,39,66,65];let pos=0;
   document.addEventListener('keydown',e=>{if(e.keyCode===seq[pos]){pos++;if(pos===seq.length){launchFW();spawnPetals(300);pos=0;}}else pos=0;});
 })();
+function showSpotifyConfirm(){
+  const el=document.getElementById('spotifyConfirm');
+  el.style.display='flex';
+}
+document.getElementById('spotifyConfirm').addEventListener('click',function(e){
+  if(e.target===this)this.style.display='none';
+});
 </script>
 </body>
 </html>
