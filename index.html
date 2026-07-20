@@ -442,10 +442,14 @@ textarea.wish-input{vertical-align:top;resize:none;}
   #sidenav{display:none}
   .hero-name{font-size:clamp(5rem,20vw,8rem)}
   .hero-sub{font-size:clamp(.95rem,4vw,1.3rem)}
-  .clock{grid-template-columns:repeat(2,1fr)}
+  .clock{grid-template-columns:repeat(3,1fr)}
   .ck{padding:1.8rem .6rem 1.4rem}
-  .ck-n{font-size:clamp(2.4rem,11vw,4rem)}
+  .ck-n{font-size:clamp(2rem,10vw,3.5rem)}
   .clock-bottom{flex-direction:column;gap:.4rem;text-align:center}
+/* age counter — year box bigger */
+.ck.ck-yr .ck-n{font-size:clamp(2.8rem,13vw,5rem);background:linear-gradient(160deg,#fff 0%,var(--blush) 50%,var(--lavender) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.ck.ck-yr{grid-column:span 3;border-bottom:1px solid rgba(139,56,212,.15);}
+@media(min-width:769px){.ck.ck-yr{grid-column:span 2;}}
   #cakeCanvas{width:100%!important;height:auto!important;}
   .universe{grid-template-columns:1fr 1fr}
 .u-cell{padding:1rem .8rem}
@@ -694,15 +698,15 @@ textarea.wish-input{vertical-align:top;resize:none;}
 <!-- ══ SCENE 2 — COUNTDOWN + CAKE ══ -->
 <section class="sec" id="s2" style="min-height:auto;padding:5.5rem 2rem">
   <span class="section-label r">💜 시간이 지나도</span>
-  <h2 class="section-title r d1" style="padding-bottom:.15em">Counting Down to <em>Afiya</em></h2>
-  <div class="section-kr r d2">아피야의 생일까지 남은 시간</div>
+  <h2 class="section-title r d1" id="s2Title" style="padding-bottom:.15em">Counting Down to <em>Afiya</em></h2>
+  <div class="section-kr r d2" id="s2Kr">아피야의 생일까지 남은 시간</div>
   <div class="clock r d3" id="clockEl">
-    <div class="ck"><span class="ck-n" id="cdD">--</span><span class="ck-u">Days</span></div>
-    <div class="ck"><span class="ck-n" id="cdH">--</span><span class="ck-u">Hours</span></div>
-    <div class="ck"><span class="ck-n" id="cdM">--</span><span class="ck-u">Minutes</span></div>
-    <div class="ck"><span class="ck-n" id="cdS">--</span><span class="ck-u">Seconds</span></div>
+    <div class="ck" id="ckCdD"><span class="ck-n" id="cdD">--</span><span class="ck-u">Days</span></div>
+    <div class="ck" id="ckCdH"><span class="ck-n" id="cdH">--</span><span class="ck-u">Hours</span></div>
+    <div class="ck" id="ckCdM"><span class="ck-n" id="cdM">--</span><span class="ck-u">Minutes</span></div>
+    <div class="ck" id="ckCdS"><span class="ck-n" id="cdS">--</span><span class="ck-u">Seconds</span></div>
   </div>
-  <div class="clock-bottom r d4">
+  <div class="clock-bottom r d4" id="clockBottom">
     <span class="ck-born">13 · 07 · 2026 · Monday</span>
     <span class="ck-army"> 💜 Forever</span>
   </div>
@@ -936,7 +940,7 @@ Explore the whole website first,<br/>Then head over to Spotify! 💜
 <script>
 /* ════ AUDIO VARS — সবার আগে ════ */
 const bdAud=new Audio('birthday.mp3');
-bdAud.volume=0.8;
+bdAud.volume=0;
 const phase1Aud=new Audio('songs/blue.mp3');
 phase1Aud.volume=0.6;
 phase1Aud.loop=true;
@@ -1265,17 +1269,57 @@ function allBlown(){
 function buildCandles(){}
 const totalCandlesOld=17;
 
+/* ════ AGE COUNTER ════ */
+function tickAge(){
+  const born=new Date('2009-07-13T00:00:00');
+  const now=new Date();
+  let years=now.getFullYear()-born.getFullYear();
+  let months=now.getMonth()-born.getMonth();
+  let days=now.getDate()-born.getDate();
+  if(days<0){months--;days+=new Date(now.getFullYear(),now.getMonth(),0).getDate();}
+  if(months<0){years--;months+=12;}
+  const h=now.getHours(),m=now.getMinutes(),s=now.getSeconds();
+  document.getElementById('cdY').textContent=String(years);
+  document.getElementById('cdMo').textContent=String(months).padStart(2,'0');
+  document.getElementById('cdD').textContent=String(days).padStart(2,'0');
+  document.getElementById('cdH').textContent=String(h).padStart(2,'0');
+  document.getElementById('cdM').textContent=String(m).padStart(2,'0');
+  document.getElementById('cdS').textContent=String(s).padStart(2,'0');
+}
+
+function switchToAgeCounter(){
+  // clock কে 6-unit grid এ বদলাও
+  const clock=document.getElementById('clockEl');
+  clock.style.gridTemplateColumns='repeat(3,1fr)';
+  // Year box যোগ করো — সবার আগে
+  const yrBox=document.createElement('div');
+  yrBox.className='ck ck-yr';
+  yrBox.innerHTML='<span class="ck-n" id="cdY">17</span><span class="ck-u">Years</span>';
+  const moBox=document.createElement('div');
+  moBox.className='ck';
+  moBox.innerHTML='<span class="ck-n" id="cdMo">00</span><span class="ck-u">Months</span>';
+  // পুরনো ৪টা ck এর আগে insert করো
+  clock.insertBefore(moBox,clock.firstChild);
+  clock.insertBefore(yrBox,clock.firstChild);
+  // label গুলো ঠিক করো
+  document.getElementById('s2Title').innerHTML='Afiya has been <em>our universe</em>';
+  document.getElementById('s2Kr').textContent='아피야와 함께한 시간 · 17 years';
+  document.getElementById('clockBottom').innerHTML='<span class="ck-born">Born · 13 July 2009</span><span class="ck-army">💜 & counting</span>';
+  clock.style.opacity='1';
+  tickAge();
+  setInterval(tickAge,1000);
+}
+
 function tickCD(){
   const diff=BD-new Date();
   if(diff<=0){
-    ['cdD','cdH','cdM','cdS'].forEach(id=>document.getElementById(id).textContent='00');
-    document.getElementById('clockEl').style.opacity='.4';
-   if(!cakeLaunched){
-  cakeLaunched=true;
-  document.getElementById('cakeSection').classList.add('show');
-  drawCake();
-  setTimeout(()=>{document.querySelectorAll('.r,.r-l,.r-r').forEach(el=>el.classList.add('on'));},100);
-}
+    if(!cakeLaunched){
+      cakeLaunched=true;
+      document.getElementById('cakeSection').classList.add('show');
+      drawCake();
+      switchToAgeCounter();
+      setTimeout(()=>{document.querySelectorAll('.r,.r-l,.r-r').forEach(el=>el.classList.add('on'));},100);
+    }
     return;
   }
   document.getElementById('cdD').textContent=String(Math.floor(diff/864e5)).padStart(2,'0');
@@ -1498,7 +1542,16 @@ function switchToBirthday(){
   phase1Aud.pause();
   phase1Aud.currentTime=0;
   bdMode=true;
-  const p=bdAud.play();if(p)p.catch(()=>{});
+  bdAud.volume=0;
+  const p=bdAud.play();
+  if(p)p.catch(()=>{});
+  // আস্তে আস্তে volume বাড়বে
+  let vol=0;
+  const fadeIn=setInterval(()=>{
+    vol=Math.min(vol+0.04,0.8);
+    bdAud.volume=vol;
+    if(vol>=0.8)clearInterval(fadeIn);
+  },120);
   document.getElementById('pTitle').textContent='🎂 Happy Birthday Afiya 💜';
   document.getElementById('pStatus').textContent='♪ now playing';
   document.getElementById('pDisc').querySelector('.p-disc-emoji').textContent='🎂';
