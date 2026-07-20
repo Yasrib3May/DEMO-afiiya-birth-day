@@ -1832,6 +1832,24 @@ async function loadWishes(){
 
 async function saveWishes(){
   try{
+    // সবসময় latest data আগে fetch করো, তারপর merge করো
+    let latest=[];
+    try{
+      const r=await fetch(JB_URL+'/latest',{
+        headers:{'X-Master-Key':JB_KEY,'X-Bin-Meta':'false'}
+      });
+      if(r.ok){
+        const d=await r.json();
+        latest=Array.isArray(d)?d:[];
+      }
+    }catch(e){}
+    // নতুন wish গুলো merge করো (duplicate বাদ দিয়ে)
+    const merged=[...latest];
+    allWishes.forEach(w=>{
+      if(!merged.find(x=>x.time===w.time&&x.name===w.name))merged.push(w);
+    });
+    allWishes=merged;
+    updateWishCount();
     await fetch(JB_URL,{
       method:'PUT',
       headers:{'Content-Type':'application/json','X-Master-Key':JB_KEY,'X-Bin-Versioning':'false'},
